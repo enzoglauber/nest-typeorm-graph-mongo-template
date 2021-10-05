@@ -1,7 +1,8 @@
 import { GraphQLModule } from '@nestjs/graphql';
+import { join } from 'path';
 
 const GraphQL = GraphQLModule.forRoot({
-  typePaths: ['./**/*.graphql'],
+  autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
   playground: true,
 })
 
