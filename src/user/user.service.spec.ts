@@ -1,4 +1,4 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -42,7 +42,7 @@ describe('UserService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('When search all Users', () => {
+  describe('When search all users', () => {
     it('Should list all users', async () => {
       const users = service.findAllUsers();
 
@@ -51,34 +51,33 @@ describe('UserService', () => {
     });
   });
 
-  describe('When search User By Id', () => {
+  describe('When search user By Id', () => {
     it('Should find a existing user', async () => {
       const userFound = service.getUserById('1');
 
       expect(mockRepository.findOne).toHaveBeenCalledWith(mockUserModel._id);
       expect(userFound).resolves.toBe(mockUserModel);
     });
+
     it('Should return a exception when does not to find a user', async () => {
       mockRepository.findOne.mockReturnValue(null);
 
-      const user = service.getUserById('3');
-
-      expect(user).rejects.toThrow(NotFoundException);
-      expect(mockRepository.findOne).toHaveBeenCalledWith('3');
+      await service.getUserById('3').catch(error => {
+        expect(error.message).toEqual('User not found');
+        expect(mockRepository.findOne).toHaveBeenCalledWith('3');
+      });
     });
   });
 
   describe('When create a user', () => {
     it('Should create a user', async () => {
       const user = service.createUser(mockAddAccountParams);
-
-      expect(mockRepository.create).toBeCalledWith(mockAddAccountParams);
-      expect(mockRepository.save).toBeCalledTimes(1);
+      expect(mockRepository.save).toBeCalled();
       expect(user).resolves.toBe(mockUserModel);
     });
   });
 
-  describe('When update User', () => {
+  describe('When update user', () => {
     it('Should update a user', async () => {
       service.getUserById = jest.fn().mockReturnValueOnce(mockUserModel);
 
@@ -88,7 +87,7 @@ describe('UserService', () => {
       expect(userUpdated).resolves.toBe(mockUpdatedUserModel);
     });
 
-    describe('When delete User', () => {
+    describe('When delete user', () => {
       it('Should delete a existing user', async () => {
         service.getUserById = jest.fn().mockReturnValueOnce(mockUserModel);
 
@@ -104,9 +103,14 @@ describe('UserService', () => {
 
         const deletedUser = service.deleteUser('1');
 
-        expect(service.getUserById).toHaveBeenCalledWith('1');
-        expect(mockRepository.delete).toBeCalledWith(mockUserModel);
-        expect(deletedUser).rejects.toThrow(InternalServerErrorException);
+
+        await service.deleteUser('1').catch(error => {
+          expect(service.getUserById).toHaveBeenCalledWith('1');
+          expect(mockRepository.delete).toBeCalledWith(mockUserModel);
+          expect(deletedUser).rejects.toThrow(InternalServerErrorException);
+
+          expect(error.message).toEqual('User not found');
+        });
       });
     });
   });
