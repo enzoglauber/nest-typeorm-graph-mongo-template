@@ -15,15 +15,17 @@ export class UserService {
   ) {}
 
   async createUser(data: CreateUserInput): Promise<User> {
+    const {password, ...rest} = data;
     const user = new User();
+
     user._id = uuid.v4();
-    user.name = data.name;
-    user.email = data.email;
-    return this.userRepository.save(user);
+    user.password = password;
+
+    return this.userRepository.save({...user, ...rest});
   }
 
-  async getUserById(id: string): Promise<User> {
-    const user = await this.userRepository.findOne(id);
+  async getUserById(_id: string): Promise<User> {
+    const user = await this.userRepository.findOne(_id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -39,8 +41,8 @@ export class UserService {
     return this.userRepository.save({ ...user, ...data });
   }
 
-  async deleteUser(id: string): Promise<void> {
-    const user = await this.getUserById(id);
+  async deleteUser(_id: string): Promise<void> {
+    const user = await this.getUserById(_id);
     const userDeleted = await this.userRepository.delete(user);
     if (!userDeleted) {
       throw new InternalServerErrorException();

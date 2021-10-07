@@ -6,6 +6,7 @@ import { User } from './../../user/user.entity';
 export const mockAddAccountParams: CreateUserInput = {
   name: 'Test User',
   email: 'user@email.com',
+  password: '123456'
 };
 
 export const mockUpdateUserParams: UpdateUserInput = {
@@ -29,10 +30,12 @@ export const mockUserArrayModel: User[] = [
     _id: '2',
     name: 'Test User 2',
     email: 'email2@email.com',
+    password: '123456'
   },
   {
     _id: '3',
     name: 'Test User 3',
     email: 'email3@email.com',
+    password: '123456'
   },
 ];

@@ -15,8 +15,8 @@ export class UserResolver {
   }
 
   @Query(() => User)
-  async user(@Args('id') id: string): Promise<User> {
-    return this.userService.getUserById(id);
+  async user(@Args('_id') _id: string): Promise<User> {
+    return this.userService.getUserById(_id);
   }
 
   @Query(() => [User])
@@ -33,8 +33,8 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteUser(@Args('id') id: string): Promise<true> {
-    await this.userService.deleteUser(id);
+  async deleteUser(@Args('_id') _id: string): Promise<true> {
+    await this.userService.deleteUser(_id);
     return true;
   }
 }
