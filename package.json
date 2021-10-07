@@ -80,5 +80,13 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "keywords": [
+    "mongodb",
+    "docker",
+    "nest",
+    "typeorm",
+    "graphql",
+    "typescript"
+  ]
 }
